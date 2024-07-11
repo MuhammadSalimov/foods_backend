@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" type="css/text" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Menu</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        padding: 2rem;
+      }
+
+      main {
+        display: grid;
+        gap: 1.5rem;
+        font: 0.75rem/1.6 helvetica, sans-serif;
+        padding: 0 100px;
+        & h1 {
+          font-family: "arial-black";
+        }
+      }
+      .flex{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      nav {
+        display: flex;
+        align-items: start;
+        gap: 0.7rem;
+        
+        & button {
+          padding: 4px 8px;
+          border: 1px solid rgb(126, 126, 126);
+          background-color: transparent;
+          font-size: 0.75rem;
+          cursor: pointer;
+          color: rgba(0, 0, 0, 0.7);
+          font-size: 24px;
+        }
+      }
+
+      .active {
+        color: black;
+        border: 1px solid black;
+      }
+
+      .menu {
+        list-style-type: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        
+        & li {
+          & img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            border-radius: 0.25rem;
+          }
+
+          & h2 {
+            color: rgba(0, 0, 0, 0.7);
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+          }
+
+          & p {
+            color: rgba(0, 0, 0, 0.35);
+          }
+        }
+      }
+
+      .hide {
+        display: none;
+      }
+
+      ::view-transition-group(*) {
+        animation-duration: 0.5s;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <header style="padding: 0 100px;">
+      <div class="container">
+        <div class="row flex">
+          <div class="logo">
+            <img style="height: 100px;" src="https://marketplace.canva.com/EAFaFUz4aKo/2/0/1600w/canva-yellow-abstract-cooking-fire-free-logo-JmYWTjUsE-Q.jpg" alt="rasm">
+          </div>
+          <a href="/api/admin">
+            <button style="border-radius: 5px; background-color: transparent; border: 1px solid black; padding: 4px 20px; font-size: 16px; font-weight: bold;">
+              <i class="fa-solid fa-user"></i>
+            </button>
+          </a>
+        </div>
+      </div>
+    </header>
+  
+    <main>
+      <h1>Categories</h1>
+      <nav>
+        <button class="active" data-tag="all">All</button>
+        <% category.forEach(item=> { %>
+          <button data-tag=<%=item.title.toLowerCase()%> class="" ><%=item.title %></button>
+          <% }) %>
+      </nav>
+
+      <ul class="menu">
+
+        <% foods.forEach(item=> { %>
+          <li class="item" data-type=<%=item.category.title.toLowerCase() %>>
+            <img
+              src=<%=item.photo %>
+            />
+            <h2><%=item.title %></h2>
+            <p>
+              <%=item.description %>
+            </p>
+            <p>
+             $ <%=item.price %>
+            </p>
+          </li>
+          <% }) %>
+      </ul>
+      
+    </main>
+
+    <script>
+      window.addEventListener("DOMContentLoaded",()=>{
+        const items = document.querySelectorAll(".item");
+
+      function insertViewTransitionName() {
+        items.forEach((item, i) => {
+          item.style.viewTransitionName = `item-${i++}`;
+        });
+      }
+
+      function updateBtn(btn) {
+        document.querySelector(".active").classList.remove("active");
+        btn.classList.add("active");
+      }
+
+      const resetMenu = () =>
+        items.forEach((item) => item.classList.remove("hide"));
+
+      function updateMenu(tag) {
+        resetMenu();
+        items.forEach((item) => {
+          if (item.dataset.type !== tag && tag !== "all") {
+            item.classList.add("hide");
+          }
+        });
+      }
+
+      function activate(e) {
+        updateMenu(e.target.dataset.tag);
+        updateBtn(e.target);
+      }
+
+      function init(e) {
+        if (!e.target.matches("button")) return;
+        insertViewTransitionName();
+        !document.startViewTransition
+          ? activate(e)
+          : document.startViewTransition(() => activate(e));
+      }
+
+      window.addEventListener("click", init, false);
+      })
+    </script>
+
+  </body>
+</html>
